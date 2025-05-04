@@ -1,0 +1,203 @@
+// docker-compose.yml
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bitget-bot-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/bitget-bot
+      - BITGET_API_KEY=${BITGET_API_KEY}
+      - BITGET_SECRET_KEY=${BITGET_SECRET_KEY}
+      - BITGET_PASSPHRASE=${BITGET_PASSPHRASE}
+      - BITGET_DEMO=true
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bitget-bot-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:latest
+    container_name: bitget-bot-mongo
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+// backend/Dockerfile
+FROM node:16-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
+
+// frontend/Dockerfile
+FROM node:16-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+
+// .env (создайте этот файл и заполните своими данными)
+BITGET_API_KEY=your_api_key
+BITGET_SECRET_KEY=your_secret_key
+BITGET_PASSPHRASE=your_passphrase
+BITGET_DEMO=true
+
+// README.md
+# BitGet Trading Bot
+
+Автоматизированный торговый бот для биржи BitGet с веб-интерфейсом и возможностью симуляции.
+
+## Особенности
+
+- Полноценный веб-интерфейс с панелью управления
+- Настройка стратегии торговли
+- Поддержка DCA (Dollar-Cost Averaging)
+- Мониторинг производительности в реальном времени
+- История сделок и статистика
+- Поддержка демо-режима для безрисковой торговли
+
+## Быстрый старт с Docker
+
+1. Клонируйте репозиторий
+```bash
+git clone https://github.com/yourusername/bitget-trading-bot.git
+cd bitget-trading-bot
+```
+
+2. Создайте файл .env и укажите свои API ключи BitGet (или оставьте как есть для демо-режима)
+```bash
+cp .env.example .env
+```
+
+3. Запустите с помощью Docker Compose
+```bash
+docker-compose up -d
+```
+
+4. Откройте браузер и перейдите по адресу http://localhost:3000
+
+## Ручная установка
+
+### Установка бэкенда
+
+1. Перейдите в директорию backend
+```bash
+cd backend
+```
+
+2. Установите зависимости
+```bash
+npm install
+```
+
+3. Запустите сервер
+```bash
+npm start
+```
+
+### Установка фронтенда
+
+1. Перейдите в директорию frontend
+```bash
+cd frontend
+```
+
+2. Установите зависимости
+```bash
+npm install
+```
+
+3. Запустите приложение
+```bash
+npm start
+```
+
+## Конфигурация стратегии
+
+Бот поддерживает следующие параметры стратегии:
+
+- **Таймфрейм**: от 1 минуты до 1 дня
+- **Плечо**: от 1x до 100x
+- **Трейлинг-стоп**: процент отклонения для активации трейлинг-стопа
+- **DCA (Dollar-Cost Averaging)**:
+  - Максимальное количество DCA-ордеров
+  - Шаг цены для DCA (в процентах)
+  - Множитель размера DCA
+- **Максимальная длительность сделки**: в минутах
+- **Реинвестирование прибыли**: процент от прибыли для реинвестирования
+
+## Использование
+
+1. Перейдите в раздел "Settings" и настройте API ключи BitGet
+2. Выберите криптовалютную пару в разделе "Bot Configuration"
+3. Настройте параметры стратегии
+4. Запустите бота с панели управления
+5. Отслеживайте производительность в разделе "Dashboard" и "Trading View"
+
+## Структура проекта
+
+```
+bitget-trading-bot/
+├── backend/             # Серверная часть (Node.js + Express)
+│   ├── api/            # API маршруты
+│   ├── config/         # Конфигурация
+│   └── services/       # Бизнес-логика
+├── frontend/           # Клиентская часть (React)
+│   ├── public/         # Статические файлы
+│   └── src/            # Исходный код
+│       ├── components/ # React компоненты
+│       ├── hooks/      # Пользовательские хуки
+│       ├── pages/      # Страницы приложения
+│       ├── services/   # Сервисы для API
+│       └── utils/      # Утилиты
+└── docker-compose.yml  # Конфигурация Docker
+```
+
+## Лицензия
+
+MIT

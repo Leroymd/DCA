@@ -1,0 +1,208 @@
+// package.json для фронтенда
+{
+  "name": "bitget-trading-bot-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.129",
+    "@mui/material": "^5.13.0",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "lightweight-charts": "^4.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.9",
+    "react-router-dom": "^6.11.1",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:5000"
+}
+
+// Структура проекта фронтенда
+// frontend/
+// ├── public/
+// │   ├── favicon.ico
+// │   ├── index.html
+// │   ├── logo192.png
+// │   ├── logo512.png
+// │   ├── manifest.json
+// │   └── robots.txt
+// ├── src/
+// │   ├── components/
+// │   │   ├── BotCard.js
+// │   │   ├── ChartComponent.js
+// │   │   ├── ConfigForm.js
+// │   │   ├── Header.js
+// │   │   ├── PerformanceChart.js
+// │   │   ├── Sidebar.js
+// │   │   ├── StatsCard.js
+// │   │   └── TradeHistoryTable.js
+// │   ├── hooks/
+// │   │   ├── useAccountBalance.js
+// │   │   ├── useApiSettings.js
+// │   │   ├── useBotStatus.js
+// │   │   ├── useKlines.js
+// │   │   ├── useSymbols.js
+// │   │   └── useTicker.js
+// │   ├── pages/
+// │   │   ├── BotConfig.js
+// │   │   ├── Dashboard.js
+// │   │   ├── Settings.js
+// │   │   ├── TradeHistory.js
+// │   │   └── TradingView.js
+// │   ├── services/
+// │   │   ├── accountService.js
+// │   │   ├── api.js
+// │   │   ├── botService.js
+// │   │   ├── marketService.js
+// │   │   ├── settingsService.js
+// │   │   └── tradeService.js
+// │   ├── utils/
+// │   │   ├── dataFormatters.js
+// │   │   └── formatters.js
+// │   ├── App.js
+// │   ├── index.css
+// │   └── index.js
+// ├── .env
+// ├── package.json
+// └── README.md
+
+// frontend/public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="BitGet Trading Bot - Автоматизированная торговля криптовалютой"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <title>BitGet Trading Bot</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+// frontend/src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// frontend/src/index.css
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.tradingview-chart {
+  width: 100%;
+  height: 500px;
+}
+
+/* Настройка скроллбара */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Стили для таблиц */
+.MuiTableRow-root.highlight {
+  background-color: rgba(144, 202, 249, 0.08);
+}
+
+.profitable {
+  color: #4caf50 !important;
+}
+
+.loss {
+  color: #f44336 !important;
+}
+
+/* Анимации для загрузки */
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+// frontend/.env
+REACT_APP_API_URL=http://localhost:5000/api
